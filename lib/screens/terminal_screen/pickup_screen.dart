@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:tasks/bloc/order_bloc.dart';
+import 'package:tasks/core/orders.dart';
 import 'package:tasks/models/order_model.dart';
 import 'package:tasks/screens/widgets/countdown_terminal.dart';
 
 class PickupTerminalScreen extends StatelessWidget {
-  final OrderBloc orderBloc;
-  const PickupTerminalScreen({super.key, required this.orderBloc});
+  final Orders orders;
+  final Stream<List<Order>> orderStream;
+  const PickupTerminalScreen(
+      {super.key, required this.orders, required this.orderStream});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
+      //width: 300,
       //height: 400,
       decoration: BoxDecoration(
-        border: Border.all(),
+        border: Border.all(
+          color: Colors.black,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(16.0),
       ),
-      margin: const EdgeInsets.all(8.0),
       child: StreamBuilder<List<Order>>(
-        stream: orderBloc.orderStream as Stream<List<Order>>?,
+        stream: orderStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Order> orders = snapshot.data!;
             return Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -57,33 +62,36 @@ class PickupTerminalScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: orders.length,
-                    itemBuilder: (context, index) {
-                      Order order = orders[index];
-                      return ListTile(
-                        visualDensity: const VisualDensity(vertical: -4),
-                        contentPadding: const EdgeInsets.all(0),
-                        leading: Text(
-                          '#${order.orderId}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                        title: Center(
-                          child: Text(
-                            '${order.boxNumber}',
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        Order order = orders[index];
+                        print(order.expirationTime.toString());
+                        return ListTile(
+                          visualDensity: const VisualDensity(vertical: -4),
+                          contentPadding: const EdgeInsets.all(0),
+                          leading: Text(
+                            '#${order.orderId}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
                           ),
-                        ),
-                        trailing: CountdownTimer(order.expirationTime),
-                      );
-                    },
+                          title: Center(
+                            child: Text(
+                              '${order.boxNumber}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          trailing: CountdownTimer(order.expirationTime),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
