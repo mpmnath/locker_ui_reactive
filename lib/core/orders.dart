@@ -1,11 +1,9 @@
 // order_bloc.dart
 import 'dart:async';
 import 'dart:collection';
-
 import 'package:tasks/models/order_model.dart';
-import 'package:tasks/screens/pickupbox_terminal.dart';
 
-class OrderBloc {
+class Orders {
   final _orderController = StreamController<List<Order>>.broadcast();
   final _orderQueueController = StreamController<Queue<int>>.broadcast();
   final List<Order> _assignedOrders = [];
@@ -14,7 +12,7 @@ class OrderBloc {
   Stream<List<Order>> get orderStream => _orderController.stream;
   Stream<Queue<int>> get orderQueueStream => _orderQueueController.stream;
 
-  OrderBloc() {
+  Orders() {
     _startExpirationCheck();
   }
 
